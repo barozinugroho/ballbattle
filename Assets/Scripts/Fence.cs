@@ -4,16 +4,27 @@ public class Fence : MonoBehaviour
 {
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        Collision(collision.gameObject);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Collision(other.gameObject);
+    }
+
+    private void Collision(GameObject _other)
+    {
+        if (_other.CompareTag("Player"))
         {
-            if (transform.parent.CompareTag("Attacker") && !collision.gameObject.GetComponent<Soldier>().param.isAttacker)
+            GameManager.instance.listAttackers.freeAttackers.Remove(_other.transform);
+            if (transform.parent.CompareTag("Attacker") && !_other.GetComponent<Soldier>().param.isAttacker)
             {
-                Destroy(collision.gameObject);
+                Destroy(_other);
             }
 
-            if (transform.parent.CompareTag("Defender") && collision.gameObject.GetComponent<Soldier>().param.isAttacker)
+            if (transform.parent.CompareTag("Defender") && _other.GetComponent<Soldier>().param.isAttacker)
             {
-                Destroy(collision.gameObject);
+                Destroy(_other);
             }
         }
     }

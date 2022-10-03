@@ -1,9 +1,5 @@
 using System.Collections;
-using System.Numerics;
-using UnityEditor.Timeline.Actions;
 using UnityEngine;
-using Quaternion = UnityEngine.Quaternion;
-using Vector3 = UnityEngine.Vector3;
 
 public class Soldier : MonoBehaviour
 {
@@ -131,6 +127,18 @@ public class Soldier : MonoBehaviour
         }
 
         indicator.SetActive(isMove);
+
+        if (param.isAttacker)
+        {
+            if (GameManager.instance.isBallOccupied && !transform.GetChild(0).CompareTag("Ball"))
+            {
+                rigidbody.isKinematic = true;
+            }
+            else
+            {
+                rigidbody.isKinematic = false;
+            }
+        }
     }
 
     private bool defenderReturn;
@@ -171,7 +179,6 @@ public class Soldier : MonoBehaviour
                 {
                     if (!GameManager.instance.isBallOccupied)
                     {
-                        //rigidbody.isKinematic = false;
                         highlight.SetActive(true);
 
                         collision.transform.SetParent(transform);
@@ -206,7 +213,7 @@ public class Soldier : MonoBehaviour
 
     private IEnumerator WaitInactive(float _time)
     {
-        //rigidbody.isKinematic = true;
+        rigidbody.isKinematic = true;
         isActive = false;
         isMove = false;
         renderer.material = inactiveMat;
@@ -225,11 +232,12 @@ public class Soldier : MonoBehaviour
             renderer.material = attackerMat;
             if (!GameManager.instance.isBallOccupied)
             {
-                //rigidbody.isKinematic = false;
+                rigidbody.isKinematic = false;
             }
         }
         else
         {
+            rigidbody.isKinematic = false;
             renderer.material = defenderMat;
             detectorArea.transform.localScale = new Vector3(param.detectionRange/10f, param.detectionRange/10f, 1f);
             detectorArea.SetActive(true);
