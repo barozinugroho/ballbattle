@@ -18,15 +18,14 @@ public class Soldier : MonoBehaviour
     public Material inactiveMat;
 
     private new MeshRenderer renderer;
-    private CapsuleCollider capsuleCollider;
+    [SerializeField]private Transform target;
     private Land land;
-    private bool isActive;
-    private bool isMove;
+    public bool isActive;
+    public bool isMove;
 
     private void Awake()
     {
         renderer = GetComponent<MeshRenderer>();
-        capsuleCollider = GetComponent<CapsuleCollider>();
     }
 
     // Start is called before the first frame update
@@ -37,7 +36,7 @@ public class Soldier : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (isActive)
         {
@@ -91,6 +90,18 @@ public class Soldier : MonoBehaviour
             else //Defender
             {
                 //lock target
+                if (target)
+                {
+                    Vector3 direction = target.position - transform.position;
+                    direction.y = 0f;
+                    Vector3 rotateToTarget = Vector3.RotateTowards(transform.forward, direction, 3f * Time.deltaTime, 0.0f);
+                    transform.rotation = Quaternion.LookRotation(rotateToTarget);
+
+                    transform.Translate(Vector3.forward * param.normalSpeed * Time.deltaTime);
+                    isMove = true;
+
+                    detectorArea.SetActive(false);
+                }
             }
             
         }
@@ -98,26 +109,15 @@ public class Soldier : MonoBehaviour
         indicator.SetActive(isMove);
     }
 
-    private void OnTriggerEnter(Collider collision)
+    private void OnCollisionEnter(Collision collision)
     {
         switch (collision.gameObject.tag)
         {
-            case "Fence":
-                isActive = false;
-                Destroy(gameObject);
-                break;
-            case "Gate":
-                isActive = false;
-                Destroy(gameObject);
+            case "Player":
+                Debug.Log("isAttacker "+collision.transform.GetComponent<Soldier>().param.isAttacker);
+                StartCoroutine(WaitInactive(param.reactivateTIme));
                 break;
             case "Ball":
-                if (!param.isAttacker)
-                {
-                    if (GameManager.instance.isBallOccupied)
-                    {
-                        isActive = false;
-                    }
-                }
                 if (param.isAttacker)
                 {
                     if (!GameManager.instance.isBallOccupied)
@@ -127,16 +127,32 @@ public class Soldier : MonoBehaviour
                         collision.transform.SetParent(transform);
                         collision.transform.SetAsFirstSibling();
                         GameManager.instance.isBallOccupied = true;
-                        capsuleCollider.radius = 1.5f;
                     }
                 }
                 break;
+        }
+    }
+
+    private void OnTriggerEnter(Collider collision)
+    {
+        switch (collision.gameObject.tag)
+        {
+            case "Fence":
+                isActive = false;
+                isMove = false;
+                break;
+            case "Gate":
+                isActive = false;
+                isMove = false;
+                break;
+            case "Ball":
+                break;
             case "Player":
-                if (!collision.GetComponent<Soldier>().param.isAttacker)
+                if (collision.GetComponent<Soldier>().param.isAttacker)
                 {
-                    if (transform.GetChild(0).CompareTag("Ball"))
+                    if (collision.transform.GetChild(0).gameObject.CompareTag("Ball"))
                     {
-                        isActive = false;
+                        target = collision.gameObject.transform;
                     }
                 }
                 break;

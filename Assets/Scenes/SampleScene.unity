@@ -2092,7 +2092,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1243685693}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 2, z: 1}
@@ -2497,7 +2497,7 @@ MonoBehaviour:
     carryingSpeed: 0
     ballSpeed: 0
     returnSpeed: 2
-    detectionRange: 35
+    detectionRange: 60
   isBallOccupied: 0
   spawnedBall: {fileID: 0}
 --- !u!1 &1550201550
@@ -3488,7 +3488,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2110507695}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 2, z: 1}
