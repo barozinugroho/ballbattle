@@ -18,7 +18,9 @@ public class Soldier : MonoBehaviour
     public Material inactiveMat;
 
     private new MeshRenderer renderer;
+    private Rigidbody rigidbody;
     [SerializeField]private Transform target;
+    private Vector3 originPos;
     private Land land;
     public bool isActive;
     public bool isMove;
@@ -26,12 +28,14 @@ public class Soldier : MonoBehaviour
     private void Awake()
     {
         renderer = GetComponent<MeshRenderer>();
+        rigidbody = GetComponent<Rigidbody>();
     }
 
     // Start is called before the first frame update
     void Start()
     {
         land = GameManager.instance.defender.land.GetComponent<Land>();
+        originPos = transform.position;
         StartCoroutine(WaitInactive(param.spawnTime));
     }
 
@@ -105,9 +109,31 @@ public class Soldier : MonoBehaviour
             }
             
         }
+        else
+        {
+            if (!param.isAttacker && defenderReturn)
+            {
+                transform.position = originPos;
+                /*// inactive defender return to origin position
+                Vector3 direction = originPos - transform.position;
+                direction.y = 0f;
+                Vector3 rotateToTarget = Vector3.RotateTowards(transform.forward, direction, 3f * Time.deltaTime, 0.0f);
+                transform.rotation = Quaternion.LookRotation(rotateToTarget);
+
+                if (transform.position != originPos)
+                {
+                    transform.Translate(Vector3.forward * param.returnSpeed * Time.deltaTime);
+                    isMove = true;
+                    //defenderReturn = false;
+                }*/
+
+            }
+        }
 
         indicator.SetActive(isMove);
     }
+
+    private bool defenderReturn;
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -115,18 +141,44 @@ public class Soldier : MonoBehaviour
         {
             case "Player":
                 Debug.Log("isAttacker "+collision.transform.GetComponent<Soldier>().param.isAttacker);
-                StartCoroutine(WaitInactive(param.reactivateTIme));
+                if (param.isAttacker) //Attacker has ball meet Defender
+                {
+                    if (!collision.transform.GetComponent<Soldier>().param.isAttacker)
+                    {
+                        if (transform.GetChild(0).CompareTag("Ball"))
+                        {
+                            StartCoroutine(WaitInactive(param.reactivateTIme));
+                            //transform.GetChild(0).parent = null;
+                        }
+                    }
+                }
+                else //Defender meet attacker that has ball
+                {
+                    if (collision.transform.GetComponent<Soldier>().param.isAttacker)
+                    {
+                        if (collision.transform.GetChild(0).CompareTag("Ball"))
+                        {
+                            target = null;
+                            StartCoroutine(WaitInactive(param.reactivateTIme));
+                            defenderReturn = true;
+                        }
+                    }
+                }
+                
                 break;
             case "Ball":
                 if (param.isAttacker)
                 {
                     if (!GameManager.instance.isBallOccupied)
                     {
+                        //rigidbody.isKinematic = false;
                         highlight.SetActive(true);
 
                         collision.transform.SetParent(transform);
                         collision.transform.SetAsFirstSibling();
+                        
                         GameManager.instance.isBallOccupied = true;
+                        GameManager.instance.listAttackers.freeAttackers.Remove(transform);
                     }
                 }
                 break;
@@ -137,14 +189,6 @@ public class Soldier : MonoBehaviour
     {
         switch (collision.gameObject.tag)
         {
-            case "Fence":
-                isActive = false;
-                isMove = false;
-                break;
-            case "Gate":
-                isActive = false;
-                isMove = false;
-                break;
             case "Ball":
                 break;
             case "Player":
@@ -152,6 +196,7 @@ public class Soldier : MonoBehaviour
                 {
                     if (collision.transform.GetChild(0).gameObject.CompareTag("Ball"))
                     {
+                        //rigidbody.isKinematic = false;
                         target = collision.gameObject.transform;
                     }
                 }
@@ -161,6 +206,7 @@ public class Soldier : MonoBehaviour
 
     private IEnumerator WaitInactive(float _time)
     {
+        //rigidbody.isKinematic = true;
         isActive = false;
         isMove = false;
         renderer.material = inactiveMat;
@@ -177,6 +223,10 @@ public class Soldier : MonoBehaviour
         if (param.isAttacker)
         {
             renderer.material = attackerMat;
+            if (!GameManager.instance.isBallOccupied)
+            {
+                //rigidbody.isKinematic = false;
+            }
         }
         else
         {
@@ -184,5 +234,10 @@ public class Soldier : MonoBehaviour
             detectorArea.transform.localScale = new Vector3(param.detectionRange/10f, param.detectionRange/10f, 1f);
             detectorArea.SetActive(true);
         }
+    }
+
+    private void FindNearestAttacker()
+    {
+
     }
 }

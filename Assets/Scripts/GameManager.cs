@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -21,6 +22,8 @@ public class GameManager : MonoBehaviour
     public Mode defender;
     public SoldierParam defenderParam;
 
+    public ListAvailableAttacker listAttackers;
+
     private void Awake()
     {
         if (instance == null)
@@ -31,6 +34,9 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        listAttackers = GetComponent<ListAvailableAttacker>();
+        listAttackers.freeAttackers = new List<Transform>();
     }
 
     // Start is called before the first frame update
@@ -67,6 +73,7 @@ public class GameManager : MonoBehaviour
                 go = Instantiate(soldier, _pos, Quaternion.LookRotation(landTop.transform.position));
                 //go.tag = _col.tag;
                 go.GetComponent<Soldier>().param = attackerParam;
+                listAttackers.freeAttackers.Add(go.transform);
                 break;
             case "Defender":
                 go = Instantiate(soldier, _pos, Quaternion.LookRotation(landBottom.transform.position));
@@ -95,8 +102,11 @@ public class GameManager : MonoBehaviour
 
     public bool isBallOccupied;
     public GameObject spawnedBall;
-    private void SpawnBall(GameObject _attacker)
+    public void SpawnBall(GameObject _attacker)
     {
+        isBallOccupied = false;
+        spawnedBall = null;
+
         float posX, posZ;
         MeshCollider bound = _attacker.GetComponent<Land>().ground.GetComponent<MeshCollider>();
         posX = Random.Range(bound.bounds.min.x, bound.bounds.max.x);
