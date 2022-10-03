@@ -19,6 +19,7 @@ public class Soldier : MonoBehaviour
 
     private new MeshRenderer renderer;
     private CapsuleCollider capsuleCollider;
+    private Land land;
     private bool isActive;
     private bool isMove;
 
@@ -31,6 +32,7 @@ public class Soldier : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        land = GameManager.instance.defender.land.GetComponent<Land>();
         StartCoroutine(WaitInactive(param.spawnTime));
     }
 
@@ -58,16 +60,16 @@ public class Soldier : MonoBehaviour
                 {
                     if (transform.GetChild(0).CompareTag("Ball"))
                     {
-                        Vector3 direction = GameManager.instance.defender.land.GetComponent<Land>().gate.transform.position - transform.position;
+                        Vector3 direction = land.gate.transform.position - transform.position;
                         direction.y = 0f;
                         Vector3 rotateToTarget = Vector3.RotateTowards(transform.forward, direction, 3f * Time.deltaTime, 0.0f);
                         transform.rotation = Quaternion.LookRotation(rotateToTarget);
                     }
                     else
                     {
-                        Vector3 direction = GameManager.instance.defender.land.transform.position - transform.position;
+                        Vector3 direction = land.fence.transform.position - transform.position;
                         direction.y = 0f;
-                        direction.z = 0f;
+                        direction.x = 0f;
                         Vector3 rotateToTarget = Vector3.RotateTowards(transform.forward, direction, 3f * Time.deltaTime, 0.0f);
                         transform.rotation = Quaternion.LookRotation(rotateToTarget);
                     }
@@ -118,12 +120,15 @@ public class Soldier : MonoBehaviour
                 }
                 if (param.isAttacker)
                 {
-                    highlight.SetActive(true);
+                    if (!GameManager.instance.isBallOccupied)
+                    {
+                        highlight.SetActive(true);
 
-                    collision.transform.SetParent(transform);
-                    collision.transform.SetAsFirstSibling();
-                    GameManager.instance.isBallOccupied = true;
-                    capsuleCollider.radius = 1.5f;
+                        collision.transform.SetParent(transform);
+                        collision.transform.SetAsFirstSibling();
+                        GameManager.instance.isBallOccupied = true;
+                        capsuleCollider.radius = 1.5f;
+                    }
                 }
                 break;
             case "Player":
