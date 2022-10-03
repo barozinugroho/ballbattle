@@ -10,6 +10,8 @@ public class Soldier : MonoBehaviour
     public SoldierParam param;
 
     public GameObject detectorArea;
+    public GameObject highlight;
+    public GameObject indicator;
 
     public Material attackerMat;
     public Material defenderMat;
@@ -17,7 +19,8 @@ public class Soldier : MonoBehaviour
 
     private new MeshRenderer renderer;
     private CapsuleCollider capsuleCollider;
-    public bool isActive;
+    private bool isActive;
+    private bool isMove;
 
     private void Awake()
     {
@@ -28,7 +31,6 @@ public class Soldier : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        detectorArea.SetActive(false);
         StartCoroutine(WaitInactive(param.spawnTime));
     }
 
@@ -56,32 +58,42 @@ public class Soldier : MonoBehaviour
                 {
                     if (transform.GetChild(0).CompareTag("Ball"))
                     {
-                        Vector3 direction = new Vector3(GameManager.instance.defender.land.GetComponent<Land>().gate.transform.position.x,
-                            this.transform.position.y,
-                            GameManager.instance.defender.land.GetComponent<Land>().gate.transform.position.z);
-                        transform.LookAt(direction);
+                        Vector3 direction = GameManager.instance.defender.land.GetComponent<Land>().gate.transform.position - transform.position;
+                        direction.y = 0f;
+                        Vector3 rotateToTarget = Vector3.RotateTowards(transform.forward, direction, 3f * Time.deltaTime, 0.0f);
+                        transform.rotation = Quaternion.LookRotation(rotateToTarget);
                     }
                     else
                     {
-                        Vector3 direction = new Vector3(GameManager.instance.defender.land.GetComponent<Land>().fence.transform.position.x,
-                            this.transform.position.y,
-                            GameManager.instance.defender.land.GetComponent<Land>().fence.transform.position.z);
-                        transform.LookAt(direction);
+                        Vector3 direction = GameManager.instance.defender.land.transform.position - transform.position;
+                        direction.y = 0f;
+                        direction.z = 0f;
+                        Vector3 rotateToTarget = Vector3.RotateTowards(transform.forward, direction, 3f * Time.deltaTime, 0.0f);
+                        transform.rotation = Quaternion.LookRotation(rotateToTarget);
                     }
                 }
-            }
 
-            if (transform.GetChild(0).CompareTag("Ball"))
-            {
-                //move with ball
-                transform.Translate(Vector3.forward * param.carryingSpeed * Time.deltaTime);
+                if (transform.GetChild(0).CompareTag("Ball"))
+                {
+                    //move with ball
+                    transform.Translate(Vector3.forward * param.carryingSpeed * Time.deltaTime);
+                    isMove = true;
+                }
+                else
+                {
+                    //move without ball
+                    transform.Translate(Vector3.forward * param.normalSpeed * Time.deltaTime);
+                    isMove = true;
+                }
             }
-            else
+            else //Defender
             {
-                //move without ball
-                transform.Translate(Vector3.forward * param.normalSpeed * Time.deltaTime);
+                //lock target
             }
+            
         }
+
+        indicator.SetActive(isMove);
     }
 
     private void OnTriggerEnter(Collider collision)
@@ -106,6 +118,8 @@ public class Soldier : MonoBehaviour
                 }
                 if (param.isAttacker)
                 {
+                    highlight.SetActive(true);
+
                     collision.transform.SetParent(transform);
                     collision.transform.SetAsFirstSibling();
                     GameManager.instance.isBallOccupied = true;
@@ -127,7 +141,11 @@ public class Soldier : MonoBehaviour
     private IEnumerator WaitInactive(float _time)
     {
         isActive = false;
+        isMove = false;
         renderer.material = inactiveMat;
+        detectorArea.SetActive(false);
+        highlight.SetActive(false);
+        indicator.SetActive(false);
         yield return new WaitForSecondsRealtime(_time);
         isActive = true;
         OnSpawn();
@@ -142,6 +160,7 @@ public class Soldier : MonoBehaviour
         else
         {
             renderer.material = defenderMat;
+            detectorArea.transform.localScale = new Vector3(param.detectionRange/10f, param.detectionRange/10f, 1f);
             detectorArea.SetActive(true);
         }
     }
