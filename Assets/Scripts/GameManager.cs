@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     public int maxHP;
     public float energyRegeneration;
     public float timeLimits;
+    public float timer { get; private set; }
 
     public Mode attacker;
     public SoldierParam attackerParam;
@@ -58,6 +59,10 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         OnTap();
+        if (timer > 0f)
+        {
+            timer -= Time.deltaTime;
+        }
     }
 
     private void OnTap()
@@ -144,6 +149,7 @@ public class GameManager : MonoBehaviour
         defender.ui.ResetUIEnergyBar();
         defender.ui.tag = DEFENDER_TAG;
 
+        timer = timeLimits;
         SpawnBall(attacker.land);
     }
 
