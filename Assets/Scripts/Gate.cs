@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Gate : MonoBehaviour
@@ -14,10 +13,18 @@ public class Gate : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ball"))
         {
-            if (transform.parent.CompareTag("Defender"))
+            if (collision.transform.parent.GetComponent<Soldier>().param.isAttacker)
+            {
+                Destroy(collision.transform.parent.gameObject);
+                GameManager.instance.SwitchMode();
+            }
+
+            /*if (transform.parent.CompareTag("Defender"))
             {
                 StartCoroutine(WaitSpawnBall());
-            }
+            }*/
+
+            
             
         }
     }

@@ -24,6 +24,11 @@ public class GameManager : MonoBehaviour
 
     public ListAvailableAttacker listAttackers;
 
+    private const string ATTACKER_TAG = "Attacker";
+    private const string DEFENDER_TAG = "Defender";
+
+    private bool isAttackersTurn;
+
     private void Awake()
     {
         if (instance == null)
@@ -42,11 +47,17 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        SetupLand();
+        isAttackersTurn = true;
+        SetupPosition(landBottom, landTop);
     }
 
     // Update is called once per frame
     void Update()
+    {
+        OnTap();
+    }
+
+    private void OnTap()
     {
         if (Input.GetMouseButtonDown(0))
         {
@@ -54,8 +65,25 @@ public class GameManager : MonoBehaviour
 
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100, 1 << 6))
             {
-                SpawnSoldier(hit.point, hit.collider);
+                switch (hit.collider.tag)
+                {
+                    case ATTACKER_TAG:
+                        if (isAttackersTurn)
+                        {
+                            SpawnSoldier(hit.point, hit.collider);
+                            isAttackersTurn = false;
+                        }
+                        break;
+                    case DEFENDER_TAG:
+                        if (!isAttackersTurn)
+                        {
+                            SpawnSoldier(hit.point, hit.collider);
+                            isAttackersTurn = true;
+                        }
+                        break;
+                }
                 
+
                 //Debug.Log($"mousePos: {Input.mousePosition}");
                 //Debug.Log($"ScreenTOWorldPoint: {Camera.main.ScreenToWorldPoint(Input.mousePosition)}");
                 Debug.DrawLine(Camera.main.ScreenToWorldPoint(Input.mousePosition), hit.point, Color.red);
@@ -69,13 +97,13 @@ public class GameManager : MonoBehaviour
         GameObject go;
         switch (_col.tag)
         {
-            case "Attacker":
+            case ATTACKER_TAG:
                 go = Instantiate(soldier, _pos, Quaternion.LookRotation(landTop.transform.position));
                 //go.tag = _col.tag;
                 go.GetComponent<Soldier>().param = attackerParam;
                 listAttackers.freeAttackers.Add(go.transform);
                 break;
-            case "Defender":
+            case DEFENDER_TAG:
                 go = Instantiate(soldier, _pos, Quaternion.LookRotation(landBottom.transform.position));
                 //go.tag = _col.tag;
                 go.GetComponent<Soldier>().param = defenderParam;
@@ -83,19 +111,33 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void SetupLand()
+    public void SwitchMode()
     {
-        landTop.tag = "Defender";
-        landTop.GetComponent<Land>().ChangeMat();
+        isAttackersTurn = true;
+        Mode temp = attacker;
+        attacker = defender;
+        defender = temp;
 
-        landBottom.tag = "Attacker";
-        landBottom.GetComponent<Land>().ChangeMat();
+        SetupPosition(attacker.land, defender.land);
+    }
+
+    private void SetupPosition(GameObject _attackerPos, GameObject _defenderPos)
+    {
+        _defenderPos.tag = DEFENDER_TAG;
+        _defenderPos.GetComponent<Land>().ChangeMat();
+
+        _attackerPos.tag = ATTACKER_TAG;
+        _attackerPos.GetComponent<Land>().ChangeMat();
 
         attacker.hp = 0;
-        attacker.land = landBottom;
+        attacker.land = _attackerPos;
+        attacker.ui = attacker.land.GetComponent<Land>().uiPlayer;
+        attacker.ui.tag = ATTACKER_TAG;
 
         defender.hp = 0;
-        defender.land = landTop;
+        defender.land = _defenderPos;
+        defender.ui = defender.land.GetComponent<Land>().uiPlayer;
+        defender.ui.tag = DEFENDER_TAG;
 
         SpawnBall(attacker.land);
     }
@@ -124,5 +166,5 @@ public class Mode
 {
     public int hp;
     public GameObject land;
-    public GameObject ui;
+    public WidgetPlayer ui;
 }
