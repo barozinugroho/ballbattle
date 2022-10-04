@@ -6,19 +6,20 @@ public class WidgetPlayer : MonoBehaviour
     public Text nameText;
     public Image[] bars;
 
-    public Color regen;
-
     // Start is called before the first frame update
     void Start()
     {
-        regen = GameManager.instance.attackerColor;
         EmptyBars();
     }
 
+    int index = 0;
     // Update is called once per frame
     void Update()
     {
-        //UpdateUIEnergy();
+        if (index < GameManager.instance.maxHP)
+        {
+            UpdateUIEnergy(index);
+        }
     }
 
     private void EmptyBars()
@@ -34,16 +35,52 @@ public class WidgetPlayer : MonoBehaviour
         nameText.text = _mode;
     }
 
+    public void ResetUIEnergyBar()
+    {
+        index = 0;
+        foreach (Image i in bars)
+        {
+            i.fillAmount = 0f;
+        }
+    }
+
     private void UpdateUIEnergy(int i)
     {
         if (bars[i].fillAmount < 1f)
         {
-            bars[i].color = regen;
+            bars[i].color = RegenColor();
             bars[i].fillAmount += GameManager.instance.energyRegeneration * Time.deltaTime;
         }
         else
         {
-            bars[i].color = GameManager.instance.attackerColor;
+            bars[i].color = HighlightColor();
+            index++;
+        }
+    }
+
+    private Color HighlightColor()
+    {
+        switch (tag)
+        {
+            case "Attacker":
+                return GameManager.instance.attackerColor;
+            case "Defender":
+                return GameManager.instance.defenderColor;
+            default:
+                return Color.white;
+        }
+    }
+
+    private Color RegenColor()
+    {
+        switch (tag)
+        {
+            case "Attacker":
+                return GameManager.instance.attackerRegencolor;
+            case "Defender":
+                return GameManager.instance.defenderRegencolor;
+            default:
+                return Color.white;
         }
     }
 }

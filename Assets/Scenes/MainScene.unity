@@ -174,7 +174,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 0, b: 0, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -455,7 +455,6 @@ MonoBehaviour:
   - {fileID: 1056059128}
   - {fileID: 1040770745}
   - {fileID: 1904164553}
-  regen: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &509942366
 GameObject:
   m_ObjectHideFlags: 0
@@ -599,7 +598,7 @@ MonoBehaviour:
   m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
-  m_FillOrigin: 0
+  m_FillOrigin: 1
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
 --- !u!222 &519947097
@@ -1221,7 +1220,7 @@ MonoBehaviour:
   m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
-  m_FillOrigin: 0
+  m_FillOrigin: 1
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
 --- !u!222 &1040770746
@@ -1375,7 +1374,7 @@ MonoBehaviour:
   m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
-  m_FillOrigin: 0
+  m_FillOrigin: 1
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
 --- !u!222 &1056059129
@@ -1643,7 +1642,6 @@ MonoBehaviour:
   - {fileID: 1331698187}
   - {fileID: 685441603}
   - {fileID: 2041593253}
-  regen: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &1526404374
 GameObject:
   m_ObjectHideFlags: 0
@@ -1693,8 +1691,10 @@ MonoBehaviour:
   landBottom: {fileID: 521320047}
   ball: {fileID: 4040795935954662923, guid: a78e2f3d7b32bb34cab0e11eff23d113, type: 3}
   attackerColor: {r: 1, g: 0, b: 0, a: 1}
+  attackerRegencolor: {r: 1, g: 0, b: 0, a: 0.50980395}
   defenderColor: {r: 0, g: 1, b: 0.92019224, a: 1}
-  maxHP: 0
+  defenderRegencolor: {r: 0, g: 1, b: 0.9215687, a: 0.50980395}
+  maxHP: 6
   energyRegeneration: 0.5
   timeLimits: 140
   attacker:
@@ -2103,7 +2103,7 @@ MonoBehaviour:
   m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
-  m_FillOrigin: 0
+  m_FillOrigin: 1
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
 --- !u!222 &1842121660
@@ -2332,7 +2332,7 @@ MonoBehaviour:
   m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
-  m_FillOrigin: 0
+  m_FillOrigin: 1
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
 --- !u!222 &1904164554

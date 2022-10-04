@@ -10,7 +10,10 @@ public class GameManager : MonoBehaviour
     public GameObject ball;
 
     public Color attackerColor;
+    public Color attackerRegencolor;
+
     public Color defenderColor;
+    public Color defenderRegencolor;
 
     public int maxHP;
     public float energyRegeneration;
@@ -123,20 +126,22 @@ public class GameManager : MonoBehaviour
 
     private void SetupPosition(GameObject _attackerPos, GameObject _defenderPos)
     {
-        _defenderPos.tag = DEFENDER_TAG;
-        _defenderPos.GetComponent<Land>().ChangeMat();
-
         _attackerPos.tag = ATTACKER_TAG;
         _attackerPos.GetComponent<Land>().ChangeMat();
+
+        _defenderPos.tag = DEFENDER_TAG;
+        _defenderPos.GetComponent<Land>().ChangeMat();
 
         attacker.hp = 0;
         attacker.land = _attackerPos;
         attacker.ui = attacker.land.GetComponent<Land>().uiPlayer;
+        attacker.ui.ResetUIEnergyBar();
         attacker.ui.tag = ATTACKER_TAG;
 
         defender.hp = 0;
         defender.land = _defenderPos;
         defender.ui = defender.land.GetComponent<Land>().uiPlayer;
+        defender.ui.ResetUIEnergyBar();
         defender.ui.tag = DEFENDER_TAG;
 
         SpawnBall(attacker.land);
