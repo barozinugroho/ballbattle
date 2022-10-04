@@ -28,13 +28,13 @@ public class Land : MonoBehaviour
         ground.tag = gameObject.tag;
         switch (gameObject.tag)
         {
-            case "Attacker":
+            case GameManager.ATTACKER_TAG:
                 fence.GetComponent<MeshRenderer>().material = attackerMat;
                 gate.GetComponent<MeshRenderer>().material = attackerMat;
                 tiang1.GetComponent<MeshRenderer>().material = attackerMat;
                 tiang2.GetComponent<MeshRenderer>().material = attackerMat;
                 break;
-            case "Defender":
+            case GameManager.DEFENDER_TAG:
                 fence.GetComponent<MeshRenderer>().material = defenderMat;
                 gate.GetComponent<MeshRenderer>().material = defenderMat;
                 tiang1.GetComponent<MeshRenderer>().material = defenderMat;

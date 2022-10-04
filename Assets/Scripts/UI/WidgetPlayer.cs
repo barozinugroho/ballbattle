@@ -9,24 +9,15 @@ public class WidgetPlayer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        EmptyBars();
+        ResetUIEnergyBar();
     }
 
-    int index = 0;
     // Update is called once per frame
     void Update()
     {
-        if (index < GameManager.instance.maxHP)
+        if (Energy() < GameManager.instance.maxHP)
         {
-            UpdateUIEnergy(index);
-        }
-    }
-
-    private void EmptyBars()
-    {
-        foreach (Image i in bars)
-        {
-            i.fillAmount = 0;
+            UpdateUIEnergy(Energy());
         }
     }
 
@@ -37,7 +28,6 @@ public class WidgetPlayer : MonoBehaviour
 
     public void ResetUIEnergyBar()
     {
-        index = 0;
         foreach (Image i in bars)
         {
             i.fillAmount = 0f;
@@ -49,12 +39,52 @@ public class WidgetPlayer : MonoBehaviour
         if (bars[i].fillAmount < 1f)
         {
             bars[i].color = RegenColor();
-            bars[i].fillAmount += GameManager.instance.energyRegeneration * Time.deltaTime;
+            bars[i].fillAmount += EnergyRegen() * Time.deltaTime;
         }
         else
         {
             bars[i].color = HighlightColor();
-            index++;
+            AddEnergy();
+            //TODO: update UI energy based on cost energy
+        }
+    }
+
+    private int Energy()
+    {
+        switch (tag)
+        {
+            case GameManager.ATTACKER_TAG:
+                return GameManager.instance.attacker.energy;
+            case GameManager.DEFENDER_TAG:
+                return GameManager.instance.defender.energy;
+            default:
+                return 0;
+        }
+    }
+
+    private void AddEnergy()
+    {
+        switch (tag)
+        {
+            case GameManager.ATTACKER_TAG:
+                GameManager.instance.attacker.energy++;
+                break;
+            case GameManager.DEFENDER_TAG:
+                GameManager.instance.defender.energy++;
+                break;
+        }
+    }
+
+    private float EnergyRegen()
+    {
+        switch (tag)
+        {
+            case GameManager.ATTACKER_TAG:
+                return GameManager.instance.attackerParam.energyRegeneration;
+            case GameManager.DEFENDER_TAG:
+                return GameManager.instance.defenderParam.energyRegeneration;
+            default:
+                return 0f;
         }
     }
 
@@ -62,9 +92,9 @@ public class WidgetPlayer : MonoBehaviour
     {
         switch (tag)
         {
-            case "Attacker":
+            case GameManager.ATTACKER_TAG:
                 return GameManager.instance.attackerColor;
-            case "Defender":
+            case GameManager.DEFENDER_TAG:
                 return GameManager.instance.defenderColor;
             default:
                 return Color.white;
@@ -75,9 +105,9 @@ public class WidgetPlayer : MonoBehaviour
     {
         switch (tag)
         {
-            case "Attacker":
+            case GameManager.ATTACKER_TAG:
                 return GameManager.instance.attackerRegencolor;
-            case "Defender":
+            case GameManager.DEFENDER_TAG:
                 return GameManager.instance.defenderRegencolor;
             default:
                 return Color.white;

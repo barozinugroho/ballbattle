@@ -16,7 +16,6 @@ public class GameManager : MonoBehaviour
     public Color defenderRegencolor;
 
     public int maxHP;
-    public float energyRegeneration;
     public float timeLimits;
     public float timer { get; private set; }
 
@@ -26,10 +25,10 @@ public class GameManager : MonoBehaviour
     public Mode defender;
     public SoldierParam defenderParam;
 
-    public ListAvailableAttacker listAttackers;
+    public ListSoldier listAttackers;
 
-    private const string ATTACKER_TAG = "Attacker";
-    private const string DEFENDER_TAG = "Defender";
+    public const string ATTACKER_TAG = "Attacker";
+    public const string DEFENDER_TAG = "Defender";
 
     private bool isAttackersTurn;
 
@@ -44,7 +43,7 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        listAttackers = GetComponent<ListAvailableAttacker>();
+        listAttackers = GetComponent<ListSoldier>();
         listAttackers.freeAttackers = new List<Transform>();
     }
 
@@ -76,14 +75,14 @@ public class GameManager : MonoBehaviour
                 switch (hit.collider.tag)
                 {
                     case ATTACKER_TAG:
-                        if (isAttackersTurn)
+                        if (isAttackersTurn && attacker.energy >= attackerParam.energyCost)
                         {
                             SpawnSoldier(hit.point, hit.collider);
                             isAttackersTurn = false;
                         }
                         break;
                     case DEFENDER_TAG:
-                        if (!isAttackersTurn)
+                        if (!isAttackersTurn && defender.energy >= defenderParam.energyCost)
                         {
                             SpawnSoldier(hit.point, hit.collider);
                             isAttackersTurn = true;
@@ -106,14 +105,14 @@ public class GameManager : MonoBehaviour
         switch (_col.tag)
         {
             case ATTACKER_TAG:
-                go = Instantiate(soldier, _pos, Quaternion.LookRotation(landTop.transform.position));
-                //go.tag = _col.tag;
+                attacker.energy -= attackerParam.energyCost;
+                go = Instantiate(soldier, _pos, Quaternion.LookRotation(attacker.land.transform.position));
                 go.GetComponent<Soldier>().param = attackerParam;
                 listAttackers.freeAttackers.Add(go.transform);
                 break;
             case DEFENDER_TAG:
-                go = Instantiate(soldier, _pos, Quaternion.LookRotation(landBottom.transform.position));
-                //go.tag = _col.tag;
+                defender.energy -= defenderParam.energyCost;
+                go = Instantiate(soldier, _pos, Quaternion.LookRotation(defender.land.transform.position));
                 go.GetComponent<Soldier>().param = defenderParam;
                 break;
         }
@@ -137,16 +136,18 @@ public class GameManager : MonoBehaviour
         _defenderPos.tag = DEFENDER_TAG;
         _defenderPos.GetComponent<Land>().ChangeMat();
 
-        attacker.hp = 0;
+        attacker.energy = 0;
         attacker.land = _attackerPos;
         attacker.ui = attacker.land.GetComponent<Land>().uiPlayer;
         attacker.ui.ResetUIEnergyBar();
+        attacker.ui.UpdateWidget(ATTACKER_TAG);
         attacker.ui.tag = ATTACKER_TAG;
 
-        defender.hp = 0;
+        defender.energy = 0;
         defender.land = _defenderPos;
         defender.ui = defender.land.GetComponent<Land>().uiPlayer;
         defender.ui.ResetUIEnergyBar();
+        defender.ui.UpdateWidget(DEFENDER_TAG);
         defender.ui.tag = DEFENDER_TAG;
 
         timer = timeLimits;
@@ -175,7 +176,7 @@ public class GameManager : MonoBehaviour
 [System.Serializable]
 public class Mode
 {
-    public int hp;
+    public int energy;
     public GameObject land;
     public WidgetPlayer ui;
 }
