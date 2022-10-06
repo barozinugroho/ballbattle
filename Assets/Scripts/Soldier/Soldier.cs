@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Soldier : MonoBehaviour
@@ -13,11 +14,16 @@ public class Soldier : MonoBehaviour
     public Material defenderMat;
     public Material inactiveMat;
 
+    public Transform target;
+
     private new MeshRenderer renderer;
     private Rigidbody rigidbody;
-    [SerializeField]private Transform target;
+    private CapsuleCollider collider;
+
     private Vector3 originPos;
     private Land land;
+
+    public bool defenderReturn;
     public bool isActive;
     public bool isMove;
 
@@ -25,6 +31,7 @@ public class Soldier : MonoBehaviour
     {
         renderer = GetComponent<MeshRenderer>();
         rigidbody = GetComponent<Rigidbody>();
+        collider = GetComponent<CapsuleCollider>();
     }
 
     // Start is called before the first frame update
@@ -44,25 +51,13 @@ public class Soldier : MonoBehaviour
             {
                 if (!GameManager.instance.isBallOccupied)
                 {
-                    //find ball
-                    /*Vector3 direction = GameManager.instance.spawnedBall.transform.position - transform.position;
-                    direction.y = 0f;
-                    Quaternion rotateTOTarget = Quaternion.LookRotation(direction);
-                    transform.rotation = Quaternion.Lerp(transform.rotation, rotateTOTarget, 3f*Time.deltaTime);*/
-
-                    Vector3 direction = GameManager.instance.spawnedBall.transform.position - transform.position;
-                    direction.y = 0f;
-                    Vector3 rotateToTarget = Vector3.RotateTowards(transform.forward, direction, 3f * Time.deltaTime, 0.0f);
-                    transform.rotation = Quaternion.LookRotation(rotateToTarget);
+                    RotateSoldier(GameManager.instance.spawnedBall.transform);
                 }
                 else
                 {
                     if (transform.GetChild(0).CompareTag("Ball"))
                     {
-                        Vector3 direction = land.gate.transform.position - transform.position;
-                        direction.y = 0f;
-                        Vector3 rotateToTarget = Vector3.RotateTowards(transform.forward, direction, 3f * Time.deltaTime, 0.0f);
-                        transform.rotation = Quaternion.LookRotation(rotateToTarget);
+                        RotateSoldier(land.gate.transform);
                     }
                     else
                     {
@@ -71,6 +66,8 @@ public class Soldier : MonoBehaviour
                         direction.x = 0f;
                         Vector3 rotateToTarget = Vector3.RotateTowards(transform.forward, direction, 3f * Time.deltaTime, 0.0f);
                         transform.rotation = Quaternion.LookRotation(rotateToTarget);
+
+                        //collider.isTrigger = true;
                     }
                 }
 
@@ -92,10 +89,7 @@ public class Soldier : MonoBehaviour
                 //lock target
                 if (target)
                 {
-                    Vector3 direction = target.position - transform.position;
-                    direction.y = 0f;
-                    Vector3 rotateToTarget = Vector3.RotateTowards(transform.forward, direction, 3f * Time.deltaTime, 0.0f);
-                    transform.rotation = Quaternion.LookRotation(rotateToTarget);
+                    RotateSoldier(target);
 
                     transform.Translate(Vector3.forward * param.normalSpeed * Time.deltaTime);
                     isMove = true;
@@ -141,78 +135,18 @@ public class Soldier : MonoBehaviour
         }
     }
 
-    private bool defenderReturn;
-
-    private void OnCollisionEnter(Collision collision)
+    private void RotateSoldier(Transform _target)
     {
-        switch (collision.gameObject.tag)
-        {
-            case "Player":
-                Debug.Log("isAttacker "+collision.transform.GetComponent<Soldier>().param.isAttacker);
-                if (param.isAttacker) //Attacker has ball meet Defender
-                {
-                    if (!collision.transform.GetComponent<Soldier>().param.isAttacker)
-                    {
-                        if (transform.GetChild(0).CompareTag("Ball"))
-                        {
-                            StartCoroutine(WaitInactive(param.reactivateTIme));
-                            //transform.GetChild(0).parent = null;
-                        }
-                    }
-                }
-                else //Defender meet attacker that has ball
-                {
-                    if (collision.transform.GetComponent<Soldier>().param.isAttacker)
-                    {
-                        if (collision.transform.GetChild(0).CompareTag("Ball"))
-                        {
-                            target = null;
-                            StartCoroutine(WaitInactive(param.reactivateTIme));
-                            defenderReturn = true;
-                        }
-                    }
-                }
-                
-                break;
-            case "Ball":
-                if (param.isAttacker)
-                {
-                    if (!GameManager.instance.isBallOccupied)
-                    {
-                        highlight.SetActive(true);
-
-                        collision.transform.SetParent(transform);
-                        collision.transform.SetAsFirstSibling();
-                        
-                        GameManager.instance.isBallOccupied = true;
-                        GameManager.instance.listAttackers.freeAttackers.Remove(transform);
-                    }
-                }
-                break;
-        }
+        Vector3 direction = _target.position - transform.position;
+        direction.y = 0f;
+        //direction.x = 0f;
+        Vector3 rotateToTarget = Vector3.RotateTowards(transform.forward, direction, 3f * Time.deltaTime, 0.0f);
+        transform.rotation = Quaternion.LookRotation(rotateToTarget);
     }
 
-    private void OnTriggerEnter(Collider collision)
+    public IEnumerator WaitInactive(float _time)
     {
-        switch (collision.gameObject.tag)
-        {
-            case "Ball":
-                break;
-            case "Player":
-                if (collision.GetComponent<Soldier>().param.isAttacker)
-                {
-                    if (collision.transform.GetChild(0).gameObject.CompareTag("Ball"))
-                    {
-                        //rigidbody.isKinematic = false;
-                        target = collision.gameObject.transform;
-                    }
-                }
-                break;
-        }
-    }
-
-    private IEnumerator WaitInactive(float _time)
-    {
+        //collider.isTrigger = true;
         rigidbody.isKinematic = true;
         isActive = false;
         isMove = false;
@@ -244,8 +178,57 @@ public class Soldier : MonoBehaviour
         }
     }
 
-    private void FindNearestAttacker()
+    public void FindNearestAttacker()
     {
         //TODO: Find Nearest attackers
+        GameManager.instance.listSoldier.attackersDistance = new List<SoldierNearest>();
+        if (transform.GetChild(0).CompareTag("Ball"))
+        {
+            for (int i = 0; i < GameManager.instance.listSoldier.freeAttackers.Count; i++)
+            {
+                float temp = Vector3.Distance(transform.position, GameManager.instance.listSoldier.freeAttackers[i].position);
+                SoldierNearest soldier = new SoldierNearest{ 
+                    soldier = GameManager.instance.listSoldier.freeAttackers[i],
+                    distance = temp
+                        };
+                GameManager.instance.listSoldier.attackersDistance.Add(soldier);
+            }
+        }
+    }
+
+    public Transform LessDistance()
+    {
+        SoldierNearest temp = null;
+        if (GameManager.instance.listSoldier.attackersDistance.Count > 1)
+        {
+            for (int i = 0; i < GameManager.instance.listSoldier.attackersDistance.Count; i++)
+            {
+                if (i == 0)
+                {
+                    if (GameManager.instance.listSoldier.attackersDistance[i].distance < GameManager.instance.listSoldier.attackersDistance[i+1].distance)
+                    {
+                        temp = GameManager.instance.listSoldier.attackersDistance[i];
+                    }
+                    else
+                    {
+                        temp = GameManager.instance.listSoldier.attackersDistance[i + 1];
+                    }
+                }
+                else
+                {
+                    if (GameManager.instance.listSoldier.attackersDistance[i].distance < temp.distance)
+                    {
+                        temp = GameManager.instance.listSoldier.attackersDistance[i];
+                    }
+                }
+            }
+            return temp.soldier;
+        }
+        else if (GameManager.instance.listSoldier.attackersDistance.Count == 1)
+        {
+            return GameManager.instance.listSoldier.attackersDistance[0].soldier;
+        }
+        else { return null; }
+
     }
 }

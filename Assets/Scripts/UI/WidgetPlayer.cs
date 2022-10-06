@@ -12,44 +12,49 @@ public class WidgetPlayer : MonoBehaviour
         ResetUIEnergyBar();
     }
 
+    private float timeToRegen = 1f;
+    private float timer = 0f;
+
+    private bool IsTimeToRegen()
+    {
+        if (timer > timeToRegen)
+        {
+            timer = 0f;
+            return true;
+        }
+        else
+        {
+            timer += Time.deltaTime;
+            return false;
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
         if (Energy() < GameManager.instance.maxHP)
         {
-            UpdateUIEnergy(Energy());
+            if (IsTimeToRegen())
+            {
+
+            }
         }
     }
 
-    public void UpdateWidget(string _mode)
+    public void UpdateName(string _mode)
     {
-        nameText.text = _mode;
+        nameText.text = _mode.ToUpper();
     }
 
     public void ResetUIEnergyBar()
     {
         foreach (Image i in bars)
         {
-            i.fillAmount = 0f;
+            i.fillAmount = 1f;
         }
     }
 
-    private void UpdateUIEnergy(int i)
-    {
-        if (bars[i].fillAmount < 1f)
-        {
-            bars[i].color = RegenColor();
-            bars[i].fillAmount += EnergyRegen() * Time.deltaTime;
-        }
-        else
-        {
-            bars[i].color = HighlightColor();
-            AddEnergy();
-            //TODO: update UI energy based on cost energy
-        }
-    }
-
-    private int Energy()
+    private float Energy()
     {
         switch (tag)
         {
@@ -67,12 +72,13 @@ public class WidgetPlayer : MonoBehaviour
         switch (tag)
         {
             case GameManager.ATTACKER_TAG:
-                GameManager.instance.attacker.energy++;
+                GameManager.instance.attacker.energy += GameManager.instance.attackerParam.energyRegeneration;
                 break;
             case GameManager.DEFENDER_TAG:
-                GameManager.instance.defender.energy++;
+                GameManager.instance.defender.energy += GameManager.instance.defenderParam.energyRegeneration;
                 break;
         }
+        Debug.Log($"energi: {Energy()} modulo: {Energy() % 1f}");
     }
 
     private float EnergyRegen()

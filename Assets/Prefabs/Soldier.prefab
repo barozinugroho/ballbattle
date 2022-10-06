@@ -287,6 +287,7 @@ GameObject:
   - component: {fileID: 5764219764036836689}
   - component: {fileID: -6581435383501994791}
   - component: {fileID: -868400615382587765}
+  - component: {fileID: 6376649921638283111}
   m_Layer: 0
   m_Name: Soldier
   m_TagString: Player
@@ -387,24 +388,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22afca8e502fe214f8764506309de041, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  param:
-    isAttacker: 0
-    energyRegeneration: 0
-    energyCost: 0
-    spawnTime: 0
-    reactivateTIme: 0
-    normalSpeed: 0
-    carryingSpeed: 0
-    ballSpeed: 0
-    returnSpeed: 0
-    detectionRange: 0
+  param: {fileID: 0}
   detectorArea: {fileID: 5719088206273177139}
   highlight: {fileID: 2946337829746263241}
   indicator: {fileID: 6608801880441642558}
   attackerMat: {fileID: 2100000, guid: d915c07a6cf38ed4a81f7d0a044e584f, type: 2}
   defenderMat: {fileID: 2100000, guid: 08685696dbfedaf43beee2fb8c3ef953, type: 2}
   inactiveMat: {fileID: 2100000, guid: cfd59bc2e971a4a4ab55eab67ccada77, type: 2}
-  target: {fileID: 0}
   isActive: 0
   isMove: 0
 --- !u!54 &-868400615382587765
@@ -423,6 +413,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
+--- !u!114 &6376649921638283111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5764219764036836690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 402a0c23ae3ba5b4e85bbb043676720e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6608801880441642558
 GameObject:
   m_ObjectHideFlags: 0

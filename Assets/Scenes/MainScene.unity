@@ -1671,7 +1671,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1526404376
 MonoBehaviour:
@@ -1693,8 +1693,6 @@ MonoBehaviour:
   attackerRegencolor: {r: 1, g: 0, b: 0, a: 0.50980395}
   defenderColor: {r: 0, g: 1, b: 0.92019224, a: 1}
   defenderRegencolor: {r: 0, g: 1, b: 0.9215687, a: 0.50980395}
-  maxHP: 6
-  timeLimits: 140
   attacker:
     energy: 0
     land: {fileID: 0}
@@ -1705,7 +1703,9 @@ MonoBehaviour:
     land: {fileID: 0}
     ui: {fileID: 0}
   defenderParam: {fileID: 11400000, guid: 75105f06620255445a8962927dded304, type: 2}
-  listAttackers: {fileID: 0}
+  listSoldier: {fileID: 0}
+  maxHP: 6
+  timeLimits: 140
   isBallOccupied: 0
   spawnedBall: {fileID: 0}
 --- !u!114 &1526404377
@@ -1721,6 +1721,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   freeAttackers: []
+  freeDefenders: []
+  attackersDistance: []
 --- !u!1 &1550201550
 GameObject:
   m_ObjectHideFlags: 0
@@ -1796,49 +1798,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1550201550}
   m_CullTransparentMesh: 1
---- !u!1 &1552610430
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1552610431}
-  - component: {fileID: 1552610432}
-  m_Layer: 0
-  m_Name: BallSpawner
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1552610431
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1552610430}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1552610432
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1552610430}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30d7a5a4ddd6d584b8360e3ac6353e6e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1602613218
 GameObject:
   m_ObjectHideFlags: 0

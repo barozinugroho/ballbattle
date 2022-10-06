@@ -16,7 +16,7 @@ public class Fence : MonoBehaviour
     {
         if (_other.CompareTag("Player"))
         {
-            GameManager.instance.listAttackers.freeAttackers.Remove(_other.transform);
+            GameManager.instance.listSoldier.freeAttackers.Remove(_other.transform);
             if (transform.parent.CompareTag(GameManager.ATTACKER_TAG) && !_other.GetComponent<Soldier>().param.isAttacker)
             {
                 Destroy(_other);

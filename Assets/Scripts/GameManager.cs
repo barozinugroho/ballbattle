@@ -15,20 +15,20 @@ public class GameManager : MonoBehaviour
     public Color defenderColor;
     public Color defenderRegencolor;
 
-    public int maxHP;
-    public float timeLimits;
-    public float timer { get; private set; }
-
     public Mode attacker;
     public SoldierParam attackerParam;
 
     public Mode defender;
     public SoldierParam defenderParam;
 
-    public ListSoldier listAttackers;
+    public ListSoldier listSoldier;
 
     public const string ATTACKER_TAG = "Attacker";
     public const string DEFENDER_TAG = "Defender";
+
+    public int maxHP;
+    public float timeLimits;
+    public float timer { get; private set; }
 
     private bool isAttackersTurn;
 
@@ -43,8 +43,9 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        listAttackers = GetComponent<ListSoldier>();
-        listAttackers.freeAttackers = new List<Transform>();
+        listSoldier = GetComponent<ListSoldier>();
+        listSoldier.freeAttackers = new List<Transform>();
+        listSoldier.freeDefenders = new List<Transform>();
     }
 
     // Start is called before the first frame update
@@ -108,14 +109,30 @@ public class GameManager : MonoBehaviour
                 attacker.energy -= attackerParam.energyCost;
                 go = Instantiate(soldier, _pos, Quaternion.LookRotation(defender.land.transform.position));
                 go.GetComponent<Soldier>().param = attackerParam;
-                listAttackers.freeAttackers.Add(go.transform);
+                listSoldier.freeAttackers.Add(go.transform);
                 break;
             case DEFENDER_TAG:
                 defender.energy -= defenderParam.energyCost;
                 go = Instantiate(soldier, _pos, Quaternion.LookRotation(attacker.land.transform.position));
                 go.GetComponent<Soldier>().param = defenderParam;
+                listSoldier.freeDefenders.Add(go.transform);
                 break;
         }
+    }
+
+    private void RemoveSoldier()
+    {
+        for (int i = 0; i < listSoldier.freeAttackers.Count; i++)
+        {
+            Destroy(listSoldier.freeAttackers[i].gameObject);
+        }
+        listSoldier.freeAttackers = new List<Transform>();
+
+        for (int i = 0; i < listSoldier.freeDefenders.Count; i++)
+        {
+            Destroy(listSoldier.freeDefenders[i].gameObject);
+        }
+        listSoldier.freeDefenders = new List<Transform>();
     }
 
     public void SwitchMode()
@@ -125,6 +142,7 @@ public class GameManager : MonoBehaviour
         attacker = defender;
         defender = temp;
 
+        RemoveSoldier();
         SetupPosition(attacker.land, defender.land);
     }
 
@@ -136,18 +154,18 @@ public class GameManager : MonoBehaviour
         _defenderPos.tag = DEFENDER_TAG;
         _defenderPos.GetComponent<Land>().ChangeMat();
 
-        attacker.energy = 0;
+        attacker.energy = 6;
         attacker.land = _attackerPos;
         attacker.ui = attacker.land.GetComponent<Land>().uiPlayer;
         attacker.ui.ResetUIEnergyBar();
-        attacker.ui.UpdateWidget(ATTACKER_TAG);
+        attacker.ui.UpdateName(ATTACKER_TAG);
         attacker.ui.tag = ATTACKER_TAG;
 
-        defender.energy = 0;
+        defender.energy = 6;
         defender.land = _defenderPos;
         defender.ui = defender.land.GetComponent<Land>().uiPlayer;
         defender.ui.ResetUIEnergyBar();
-        defender.ui.UpdateWidget(DEFENDER_TAG);
+        defender.ui.UpdateName(DEFENDER_TAG);
         defender.ui.tag = DEFENDER_TAG;
 
         timer = timeLimits;
@@ -176,7 +194,7 @@ public class GameManager : MonoBehaviour
 [System.Serializable]
 public class Mode
 {
-    public int energy;
+    public float energy;
     public GameObject land;
     public WidgetPlayer ui;
 }

@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: DefenderParam
   m_EditorClassIdentifier: 
   isAttacker: 0
-  energyRegeneration: 0
-  energyCost: 0
-  spawnTime: 0
-  reactivateTIme: 0
-  normalSpeed: 0
+  energyRegeneration: 0.5
+  energyCost: 3
+  spawnTime: 0.5
+  reactivateTIme: 4
+  normalSpeed: 1
   carryingSpeed: 0
   ballSpeed: 0
-  returnSpeed: 0
-  detectionRange: 0
+  returnSpeed: 2
+  detectionRange: 60

@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b7518f2825473341bc1cd003472ed73, type: 3}
   m_Name: AttackerParam
   m_EditorClassIdentifier: 
-  isAttacker: 0
-  energyRegeneration: 0
-  energyCost: 0
-  spawnTime: 0
-  reactivateTIme: 0
-  normalSpeed: 0
-  carryingSpeed: 0
-  ballSpeed: 0
+  isAttacker: 1
+  energyRegeneration: 0.5
+  energyCost: 2
+  spawnTime: 0.5
+  reactivateTIme: 2.5
+  normalSpeed: 1.5
+  carryingSpeed: 0.75
+  ballSpeed: 1.5
   returnSpeed: 0
   detectionRange: 0
