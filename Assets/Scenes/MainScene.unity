@@ -1694,38 +1694,17 @@ MonoBehaviour:
   defenderColor: {r: 0, g: 1, b: 0.92019224, a: 1}
   defenderRegencolor: {r: 0, g: 1, b: 0.9215687, a: 0.50980395}
   maxHP: 6
-  energyRegeneration: 0.5
   timeLimits: 140
   attacker:
-    hp: 0
+    energy: 0
     land: {fileID: 0}
     ui: {fileID: 0}
-  attackerParam:
-    isAttacker: 1
-    energyRegeneration: 0.5
-    energyCost: 2
-    spawnTime: 0.5
-    reactivateTIme: 2.5
-    normalSpeed: 1.5
-    carryingSpeed: 0.75
-    ballSpeed: 1.5
-    returnSpeed: 0
-    detectionRange: 0
+  attackerParam: {fileID: 11400000, guid: d8784b61c5d563c47bc95d956069109b, type: 2}
   defender:
-    hp: 0
+    energy: 0
     land: {fileID: 0}
     ui: {fileID: 0}
-  defenderParam:
-    isAttacker: 0
-    energyRegeneration: 0.5
-    energyCost: 3
-    spawnTime: 0.5
-    reactivateTIme: 4
-    normalSpeed: 1
-    carryingSpeed: 0
-    ballSpeed: 0
-    returnSpeed: 2
-    detectionRange: 70
+  defenderParam: {fileID: 11400000, guid: 75105f06620255445a8962927dded304, type: 2}
   listAttackers: {fileID: 0}
   isBallOccupied: 0
   spawnedBall: {fileID: 0}

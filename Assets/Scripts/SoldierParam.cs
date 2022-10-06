@@ -1,7 +1,8 @@
 using UnityEngine;
 
 [System.Serializable]
-public class SoldierParam
+[CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/SoldierParam", order = 1)]
+public class SoldierParam : ScriptableObject
 {
     public bool isAttacker;
     public float energyRegeneration;
