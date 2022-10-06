@@ -13,19 +13,14 @@ public class Gate : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ball"))
         {
-            if (collision.transform.parent.GetComponent<Soldier>().param.isAttacker)
+            if (transform.parent.CompareTag("Defender"))
             {
-                Destroy(collision.transform.parent.gameObject);
-                GameManager.instance.SwitchMode();
-            }
-
-            /*if (transform.parent.CompareTag("Defender"))
-            {
-                StartCoroutine(WaitSpawnBall());
-            }*/
-
-            
-            
+                if (collision.transform.parent.GetComponent<Soldier>().param.isAttacker)
+                {
+                    Destroy(collision.transform.parent.gameObject);
+                    GameManager.instance.SwitchMode();
+                }
+            }            
         }
     }
 }
