@@ -106,13 +106,13 @@ public class GameManager : MonoBehaviour
         {
             case ATTACKER_TAG:
                 attacker.energy -= attackerParam.energyCost;
-                go = Instantiate(soldier, _pos, Quaternion.LookRotation(attacker.land.transform.position));
+                go = Instantiate(soldier, _pos, Quaternion.LookRotation(defender.land.transform.position));
                 go.GetComponent<Soldier>().param = attackerParam;
                 listAttackers.freeAttackers.Add(go.transform);
                 break;
             case DEFENDER_TAG:
                 defender.energy -= defenderParam.energyCost;
-                go = Instantiate(soldier, _pos, Quaternion.LookRotation(defender.land.transform.position));
+                go = Instantiate(soldier, _pos, Quaternion.LookRotation(attacker.land.transform.position));
                 go.GetComponent<Soldier>().param = defenderParam;
                 break;
         }
