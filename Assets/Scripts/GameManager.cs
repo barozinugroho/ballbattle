@@ -51,8 +51,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        isAttackersTurn = true;
-        SetupPosition(landBottom, landTop);
+        
     }
 
     // Update is called once per frame
@@ -76,14 +75,14 @@ public class GameManager : MonoBehaviour
                 switch (hit.collider.tag)
                 {
                     case ATTACKER_TAG:
-                        if (isAttackersTurn && attacker.energy >= attackerParam.energyCost)
+                        if (attacker.energy >= attackerParam.energyCost)
                         {
                             SpawnSoldier(hit.point, hit.collider);
                             isAttackersTurn = false;
                         }
                         break;
                     case DEFENDER_TAG:
-                        if (!isAttackersTurn && defender.energy >= defenderParam.energyCost)
+                        if (defender.energy >= defenderParam.energyCost)
                         {
                             SpawnSoldier(hit.point, hit.collider);
                             isAttackersTurn = true;
@@ -108,12 +107,14 @@ public class GameManager : MonoBehaviour
             case ATTACKER_TAG:
                 attacker.energy -= attackerParam.energyCost;
                 go = Instantiate(soldier, _pos, Quaternion.LookRotation(defender.land.transform.position));
+                go.transform.SetParent(transform);
                 go.GetComponent<Soldier>().param = attackerParam;
                 listSoldier.freeAttackers.Add(go.transform);
                 break;
             case DEFENDER_TAG:
                 defender.energy -= defenderParam.energyCost;
                 go = Instantiate(soldier, _pos, Quaternion.LookRotation(attacker.land.transform.position));
+                go.transform.SetParent(transform);
                 go.GetComponent<Soldier>().param = defenderParam;
                 listSoldier.freeDefenders.Add(go.transform);
                 break;
@@ -122,16 +123,15 @@ public class GameManager : MonoBehaviour
 
     private void RemoveSoldier()
     {
-        for (int i = 0; i < listSoldier.freeAttackers.Count; i++)
+        if (transform.childCount > 0)
         {
-            Destroy(listSoldier.freeAttackers[i].gameObject);
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                Destroy(transform.GetChild(i).gameObject);
+            }
         }
-        listSoldier.freeAttackers = new List<Transform>();
 
-        for (int i = 0; i < listSoldier.freeDefenders.Count; i++)
-        {
-            Destroy(listSoldier.freeDefenders[i].gameObject);
-        }
+        listSoldier.freeAttackers = new List<Transform>();
         listSoldier.freeDefenders = new List<Transform>();
     }
 
@@ -154,14 +154,14 @@ public class GameManager : MonoBehaviour
         _defenderPos.tag = DEFENDER_TAG;
         _defenderPos.GetComponent<Land>().ChangeMat();
 
-        attacker.energy = 6;
+        attacker.energy = 0;
         attacker.land = _attackerPos;
         attacker.ui = attacker.land.GetComponent<Land>().uiPlayer;
         attacker.ui.ResetUIEnergyBar();
         attacker.ui.UpdateName(ATTACKER_TAG);
         attacker.ui.tag = ATTACKER_TAG;
 
-        defender.energy = 6;
+        defender.energy = 0;
         defender.land = _defenderPos;
         defender.ui = defender.land.GetComponent<Land>().uiPlayer;
         defender.ui.ResetUIEnergyBar();
@@ -188,6 +188,17 @@ public class GameManager : MonoBehaviour
         //Debug.Log($"boundMinX: {bound.bounds.min.x}, boundMaxX: {bound.bounds.max.x}");
         //Debug.Log($"boundMinZ: {bound.bounds.min.z}, boundMaxZ: {bound.bounds.max.z}");
         //Debug.Log($"posX: {posX}, posZ: {posZ}");
+    }
+
+    public void Play()
+    {
+        isAttackersTurn = true;
+        SetupPosition(landBottom, landTop);
+    }
+
+    public void Quit()
+    {
+        Application.Quit();
     }
 }
 

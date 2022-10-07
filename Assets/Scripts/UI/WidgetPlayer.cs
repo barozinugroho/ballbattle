@@ -19,6 +19,7 @@ public class WidgetPlayer : MonoBehaviour
     {
         if (timer > timeToRegen)
         {
+            //Debug.Log($"timer: {timer}");
             timer = 0f;
             return true;
         }
@@ -36,7 +37,9 @@ public class WidgetPlayer : MonoBehaviour
         {
             if (IsTimeToRegen())
             {
-
+                //Debug.Log($"Regen");
+                UpdateUI();
+                //AddEnergy();
             }
         }
     }
@@ -50,7 +53,24 @@ public class WidgetPlayer : MonoBehaviour
     {
         foreach (Image i in bars)
         {
-            i.fillAmount = 1f;
+            i.fillAmount = 0f;
+        }
+    }
+
+    private void UpdateUI()
+    {
+        if (bars[(int)Energy()].fillAmount < 1f)
+        {
+            bars[(int)Energy()].color = RegenColor();
+            bars[(int)Energy()].fillAmount += EnergyRegen();
+        }
+        else
+        {
+            if (Energy() % 1f == 0f)
+            {
+                bars[(int)Energy()].color = HighlightColor();
+                AddEnergy();
+            }
         }
     }
 
@@ -72,13 +92,15 @@ public class WidgetPlayer : MonoBehaviour
         switch (tag)
         {
             case GameManager.ATTACKER_TAG:
-                GameManager.instance.attacker.energy += GameManager.instance.attackerParam.energyRegeneration;
+                //GameManager.instance.attacker.energy += GameManager.instance.attackerParam.energyRegeneration;
+                GameManager.instance.attacker.energy++;
                 break;
             case GameManager.DEFENDER_TAG:
-                GameManager.instance.defender.energy += GameManager.instance.defenderParam.energyRegeneration;
+                //GameManager.instance.defender.energy += GameManager.instance.defenderParam.energyRegeneration;
+                GameManager.instance.defender.energy++;
                 break;
         }
-        Debug.Log($"energi: {Energy()} modulo: {Energy() % 1f}");
+        //Debug.Log($"energi: {Energy()} modulo: {Energy() % 1f}");
     }
 
     private float EnergyRegen()

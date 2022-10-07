@@ -17,7 +17,7 @@ public class Soldier : MonoBehaviour
     public Transform target;
 
     private new MeshRenderer renderer;
-    private Rigidbody rigidbody;
+    private new Rigidbody rigidbody;
     private CapsuleCollider collider;
 
     private Vector3 originPos;
@@ -66,8 +66,6 @@ public class Soldier : MonoBehaviour
                         direction.x = 0f;
                         Vector3 rotateToTarget = Vector3.RotateTowards(transform.forward, direction, 3f * Time.deltaTime, 0.0f);
                         transform.rotation = Quaternion.LookRotation(rotateToTarget);
-
-                        //collider.isTrigger = true;
                     }
                 }
 
@@ -122,7 +120,7 @@ public class Soldier : MonoBehaviour
 
         indicator.SetActive(isMove);
 
-        if (param.isAttacker)
+        /*if (param.isAttacker)
         {
             if (GameManager.instance.isBallOccupied && !transform.GetChild(0).CompareTag("Ball"))
             {
@@ -132,28 +130,26 @@ public class Soldier : MonoBehaviour
             {
                 rigidbody.isKinematic = false;
             }
-        }
+        }*/
     }
 
     private void RotateSoldier(Transform _target)
     {
         Vector3 direction = _target.position - transform.position;
         direction.y = 0f;
-        //direction.x = 0f;
         Vector3 rotateToTarget = Vector3.RotateTowards(transform.forward, direction, 3f * Time.deltaTime, 0.0f);
         transform.rotation = Quaternion.LookRotation(rotateToTarget);
     }
 
     public IEnumerator WaitInactive(float _time)
     {
-        //collider.isTrigger = true;
-        rigidbody.isKinematic = true;
         isActive = false;
         isMove = false;
         renderer.material = inactiveMat;
         detectorArea.SetActive(false);
         highlight.SetActive(false);
         indicator.SetActive(false);
+        target = null;
         yield return new WaitForSecondsRealtime(_time);
         isActive = true;
         OnSpawn();
@@ -164,14 +160,14 @@ public class Soldier : MonoBehaviour
         if (param.isAttacker)
         {
             renderer.material = attackerMat;
-            if (!GameManager.instance.isBallOccupied)
+            /*if (!GameManager.instance.isBallOccupied)
             {
                 rigidbody.isKinematic = false;
-            }
+            }*/
         }
         else
         {
-            rigidbody.isKinematic = false;
+            //rigidbody.isKinematic = false;
             renderer.material = defenderMat;
             detectorArea.transform.localScale = new Vector3(param.detectionRange/10f, param.detectionRange/10f, 1f);
             detectorArea.SetActive(true);

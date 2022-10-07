@@ -29,39 +29,4 @@ public class Ball : MonoBehaviour
         transform.parent = player;
         transform.SetAsFirstSibling();
     }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        switch (collision.gameObject.tag)
-        {
-            case "Player":
-                Debug.Log(collision.gameObject.name);
-                if (collision.gameObject.GetComponent<Soldier>().param.isAttacker)
-                {
-                    if (!GameManager.instance.isBallOccupied)
-                    {
-                        collision.gameObject.GetComponent<Soldier>().highlight.SetActive(true);
-
-                        transform.SetParent(collision.transform);
-                        transform.SetAsFirstSibling();
-
-                        GameManager.instance.isBallOccupied = true;
-                        GameManager.instance.listSoldier.freeAttackers.Remove(collision.transform);
-
-                        player = null;
-                    }
-                }
-                break;
-        }
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        switch (other.tag)
-        {
-            case "Player":
-                Debug.Log(other.name);
-                break;
-        }
-    }
 }
