@@ -1205,8 +1205,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -153}
-  m_SizeDelta: {x: 0, y: 1080.4}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 1174.26}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1022833875
 MonoBehaviour:
@@ -1782,7 +1782,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1311795558
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2133,7 +2133,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.0000076294, y: -293}
+  m_AnchoredPosition: {x: -0.0000038147, y: -156.27}
   m_SizeDelta: {x: 354.841, y: 115.113}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1442902095
@@ -2579,7 +2579,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.000030518, y: -488}
+  m_AnchoredPosition: {x: 0.000041962, y: -369}
   m_SizeDelta: {x: 354.841, y: 115.113}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1556429778
@@ -2794,6 +2794,8 @@ MonoBehaviour:
   mainMenu: {fileID: 1311795557}
   gameMenu: {fileID: 1317997742}
   winLoseScreen: {fileID: 1930634152}
+  topText: {fileID: 1484872896}
+  bottomText: {fileID: 1352068794}
   attackerColor: {r: 1, g: 0, b: 0, a: 1}
   attackerRegencolor: {r: 1, g: 0, b: 0, a: 0.50980395}
   defenderColor: {r: 0, g: 1, b: 0.92156863, a: 1}
@@ -3480,7 +3482,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1930634153
 RectTransform:
   m_ObjectHideFlags: 0

@@ -21,7 +21,7 @@ public class MatchManager : MonoBehaviour
 
     public void UpdateMatchResult(string _status)
     {
-        if (matchCounter < maxMatch)
+        if (matchCounter < maxMatch - 1)
         {
             matchCounter++;
             switch (_status)
