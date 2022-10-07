@@ -3,6 +3,8 @@ using UnityEngine.UI;
 
 public class WidgetPlayer : MonoBehaviour
 {
+    public UIMainMenu mainMenu;
+
     public Text nameText;
     public Image[] bars;
 
@@ -54,6 +56,32 @@ public class WidgetPlayer : MonoBehaviour
         foreach (Image i in bars)
         {
             i.fillAmount = 0f;
+        }
+    }
+
+    public void ReduceEnergy(int _amount, int _current)
+    {
+        //Debug.Log($"reduce amount energy: {_amount} {_current}");
+        int min = _current - _amount;
+        if (min == 0)
+        {
+            for (int i = _amount; i >= min; i--)
+            {
+                if (bars[i].fillAmount == 1f)
+                {
+                    bars[i].fillAmount = 0f;
+                }
+            }
+        }
+        else
+        {
+            for (int i = _amount; i > min; i--)
+            {
+                if (bars[i].fillAmount == 1f)
+                {
+                    bars[i].fillAmount = 0f;
+                }
+            }
         }
     }
 
@@ -121,9 +149,9 @@ public class WidgetPlayer : MonoBehaviour
         switch (tag)
         {
             case GameManager.ATTACKER_TAG:
-                return GameManager.instance.attackerColor;
+                return mainMenu.attackerColor;
             case GameManager.DEFENDER_TAG:
-                return GameManager.instance.defenderColor;
+                return mainMenu.defenderColor;
             default:
                 return Color.white;
         }
@@ -134,9 +162,9 @@ public class WidgetPlayer : MonoBehaviour
         switch (tag)
         {
             case GameManager.ATTACKER_TAG:
-                return GameManager.instance.attackerRegencolor;
+                return mainMenu.attackerRegencolor;
             case GameManager.DEFENDER_TAG:
-                return GameManager.instance.defenderRegencolor;
+                return mainMenu.defenderRegencolor;
             default:
                 return Color.white;
         }

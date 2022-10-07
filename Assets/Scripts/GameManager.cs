@@ -5,15 +5,11 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
+    public GameState gameState;
+
     public GameObject soldier;
     public GameObject landTop, landBottom;
     public GameObject ball;
-
-    public Color attackerColor;
-    public Color attackerRegencolor;
-
-    public Color defenderColor;
-    public Color defenderRegencolor;
 
     public Mode attacker;
     public SoldierParam attackerParam;
@@ -22,6 +18,7 @@ public class GameManager : MonoBehaviour
     public SoldierParam defenderParam;
 
     public ListSoldier listSoldier;
+    public MatchManager match;
 
     public const string ATTACKER_TAG = "Attacker";
     public const string DEFENDER_TAG = "Defender";
@@ -51,16 +48,23 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        gameState = GameState.MAIN_MENU;
     }
 
     // Update is called once per frame
     void Update()
     {
-        OnTap();
-        if (timer > 0f)
+        if (gameState == GameState.PLAY)
         {
-            timer -= Time.deltaTime;
+            OnTap();
+            if (timer > 0f)
+            {
+                timer -= Time.deltaTime;
+            }
+            else
+            {
+                match.UpdateMatchResult("draw");
+            }
         }
     }
 
@@ -78,6 +82,7 @@ public class GameManager : MonoBehaviour
                         if (attacker.energy >= attackerParam.energyCost)
                         {
                             SpawnSoldier(hit.point, hit.collider);
+                            attacker.ui.ReduceEnergy(attackerParam.energyCost, (int)attacker.energy);
                             isAttackersTurn = false;
                         }
                         break;
@@ -85,6 +90,7 @@ public class GameManager : MonoBehaviour
                         if (defender.energy >= defenderParam.energyCost)
                         {
                             SpawnSoldier(hit.point, hit.collider);
+                            defender.ui.ReduceEnergy(defenderParam.energyCost, (int)defender.energy);
                             isAttackersTurn = true;
                         }
                         break;
@@ -109,7 +115,7 @@ public class GameManager : MonoBehaviour
                 go = Instantiate(soldier, _pos, Quaternion.LookRotation(defender.land.transform.position));
                 go.transform.SetParent(transform);
                 go.GetComponent<Soldier>().param = attackerParam;
-                listSoldier.freeAttackers.Add(go.transform);
+                //listSoldier.freeAttackers.Add(go.transform);
                 break;
             case DEFENDER_TAG:
                 defender.energy -= defenderParam.energyCost;
@@ -185,6 +191,8 @@ public class GameManager : MonoBehaviour
         posZ = Random.Range(bound.bounds.min.z, bound.bounds.max.z);
         Vector3 newPos = new Vector3(posX, 0.5f, posZ);
         spawnedBall = Instantiate(ball, newPos, Quaternion.identity);
+
+
         //Debug.Log($"boundMinX: {bound.bounds.min.x}, boundMaxX: {bound.bounds.max.x}");
         //Debug.Log($"boundMinZ: {bound.bounds.min.z}, boundMaxZ: {bound.bounds.max.z}");
         //Debug.Log($"posX: {posX}, posZ: {posZ}");
@@ -193,6 +201,7 @@ public class GameManager : MonoBehaviour
     public void Play()
     {
         isAttackersTurn = true;
+        gameState = GameState.PLAY;
         SetupPosition(landBottom, landTop);
     }
 
@@ -200,6 +209,11 @@ public class GameManager : MonoBehaviour
     {
         Application.Quit();
     }
+}
+
+public enum GameState
+{
+    PLAY, MAIN_MENU, GAME_END
 }
 
 [System.Serializable]

@@ -160,6 +160,15 @@ public class Soldier : MonoBehaviour
         if (param.isAttacker)
         {
             renderer.material = attackerMat;
+            if (!transform.GetChild(0).CompareTag("Ball"))
+            {
+                Debug.Log("add free attacker");
+                if (!GameManager.instance.listSoldier.freeAttackers.Contains(transform))
+                {
+                    GameManager.instance.listSoldier.freeAttackers.Add(transform);
+                }
+                
+            }
             /*if (!GameManager.instance.isBallOccupied)
             {
                 rigidbody.isKinematic = false;

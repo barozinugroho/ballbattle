@@ -29,17 +29,25 @@ public class SoldierTrigger : MonoBehaviour
                             // inactive
                             if (Vector3.Distance(transform.position, other.transform.position) <= 1f)
                             {
-                                Debug.Log("Attacker inactive");
+                                //Debug.Log("Attacker inactive");
                                 StartCoroutine(soldier.WaitInactive(soldier.param.reactivateTIme));
 
                                 // find nearest attacker
                                 soldier.FindNearestAttacker();
 
-                                // pass the ball to nearest attackers
-                                transform.GetChild(0).GetComponent<Ball>().player = soldier.LessDistance();
-                                transform.GetChild(0).GetComponent<Ball>().speed = soldier.param.ballSpeed;
-                                //transform.GetChild(0).parent = null;
-                                GameManager.instance.isBallOccupied = false;
+                                if (soldier.LessDistance() != null)
+                                {
+                                    // pass the ball to nearest attackers
+                                    transform.GetChild(0).GetComponent<Ball>().player = soldier.LessDistance();
+                                    transform.GetChild(0).GetComponent<Ball>().speed = soldier.param.ballSpeed;
+                                    //transform.GetChild(0).parent = null;
+                                    GameManager.instance.isBallOccupied = false;
+                                }
+                                else
+                                {
+                                    GameManager.instance.SwitchMode();
+                                    GameManager.instance.match.UpdateMatchResult("lose");
+                                }
                             }
                         }
                     }
@@ -51,8 +59,9 @@ public class SoldierTrigger : MonoBehaviour
                         // inactive
                         if (Vector3.Distance(transform.position, other.transform.position) <= 1f)
                         {
-                            Debug.Log("Defender inactive");
+                            //Debug.Log("Defender inactive");
                             StartCoroutine(soldier.WaitInactive(soldier.param.reactivateTIme));
+                            soldier.defenderReturn = true;
                         }
                     }
                 }
@@ -65,6 +74,7 @@ public class SoldierTrigger : MonoBehaviour
                     {
                         if (soldier.transform.GetChild(0).CompareTag("Ball"))
                         {
+                            soldier.defenderReturn = false;
                             other.transform.parent.GetComponent<Soldier>().target = soldier.transform;
                         }
                     }
